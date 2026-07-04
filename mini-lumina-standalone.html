@@ -1,0 +1,1463 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#1a1a2e">
+    <meta name="description" content="Mini Lumina - Manifestation Glowup Challenge">
+    <title>✨ Mini Lumina</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --dark-bg: #0f0f1e;
+            --dark-card: #1a1a2e;
+            --dark-border: #2a2a3e;
+            --gold: #d4af37;
+            --rose-gold: #d8a8a8;
+            --text-primary: #ffffff;
+            --text-secondary: #b0b0c0;
+            --accent: #8b5cf6;
+        }
+
+        body {
+            background: var(--dark-bg);
+            color: var(--text-primary);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        .app {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            padding-bottom: 80px;
+        }
+
+        .app-header {
+            background: linear-gradient(135deg, var(--dark-card) 0%, var(--dark-border) 100%);
+            border-bottom: 2px solid var(--gold);
+            padding: 24px;
+            text-align: center;
+            box-shadow: 0 4px 20px rgba(212, 175, 55, 0.1);
+        }
+
+        .header-content h1 {
+            font-size: 32px;
+            font-weight: 700;
+            color: var(--gold);
+            margin-bottom: 8px;
+            letter-spacing: 2px;
+        }
+
+        .challenge-period {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .main-content {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            max-width: 100%;
+        }
+
+        .view {
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .view.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 70px;
+            background: var(--dark-card);
+            border-top: 2px solid var(--dark-border);
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .nav-btn {
+            flex: 1;
+            background: transparent;
+            border: none;
+            color: var(--text-secondary);
+            font-size: 24px;
+            cursor: pointer;
+            padding: 12px;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .nav-btn:hover {
+            color: var(--gold);
+            background: rgba(212, 175, 55, 0.1);
+        }
+
+        .nav-btn.active {
+            color: var(--gold);
+            background: rgba(212, 175, 55, 0.2);
+            box-shadow: 0 0 10px rgba(212, 175, 55, 0.3);
+        }
+
+        .card {
+            background: var(--dark-card);
+            border: 1px solid var(--dark-border);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .card:hover {
+            border-color: var(--gold);
+            box-shadow: 0 4px 16px rgba(212, 175, 55, 0.1);
+        }
+
+        .card-title {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            color: var(--gold);
+        }
+
+        .btn {
+            background: linear-gradient(135deg, var(--accent), var(--gold));
+            border: none;
+            color: var(--dark-bg);
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(212, 175, 55, 0.3);
+        }
+
+        .back-btn {
+            background: transparent;
+            color: var(--gold);
+            border: none;
+            cursor: pointer;
+            font-size: 20px;
+            margin-bottom: 20px;
+            padding: 8px;
+        }
+
+        /* Dashboard Styles */
+        .dashboard-greeting {
+            margin-bottom: 28px;
+            text-align: center;
+        }
+
+        .dashboard-greeting h2 {
+            font-size: 28px;
+            color: var(--gold);
+            margin-bottom: 8px;
+            font-weight: 700;
+        }
+
+        .dashboard-greeting p {
+            color: var(--text-secondary);
+            font-size: 14px;
+        }
+
+        .streak-card {
+            background: linear-gradient(135deg, var(--dark-card), var(--dark-border));
+            border: 2px solid var(--gold);
+            border-radius: 16px;
+            padding: 32px;
+            text-align: center;
+            margin-bottom: 28px;
+            box-shadow: 0 8px 32px rgba(212, 175, 55, 0.15);
+        }
+
+        .streak-number {
+            font-size: 48px;
+            font-weight: 700;
+            color: var(--gold);
+            margin-bottom: 12px;
+        }
+
+        .goals-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 16px;
+            margin-bottom: 28px;
+        }
+
+        .goal-card {
+            background: var(--dark-card);
+            border: 1px solid var(--dark-border);
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .goal-card:hover {
+            border-color: var(--gold);
+            box-shadow: 0 8px 24px rgba(212, 175, 55, 0.15);
+            transform: translateY(-4px);
+        }
+
+        .goal-icon {
+            font-size: 36px;
+            margin-bottom: 12px;
+        }
+
+        .goal-card h3 {
+            font-size: 16px;
+            color: var(--gold);
+            margin-bottom: 12px;
+            font-weight: 700;
+        }
+
+        .goal-value {
+            font-size: 32px;
+            font-weight: 700;
+            color: #ffffff;
+            margin-bottom: 4px;
+        }
+
+        .quick-actions {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            margin-bottom: 28px;
+        }
+
+        .action-btn {
+            background: linear-gradient(135deg, var(--dark-card), var(--dark-border));
+            border: 1px solid var(--dark-border);
+            color: var(--gold);
+            padding: 16px;
+            border-radius: 10px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .action-btn:hover {
+            border-color: var(--gold);
+            box-shadow: 0 4px 16px rgba(212, 175, 55, 0.2);
+        }
+
+        .affirmation-box {
+            background: linear-gradient(135deg, rgba(212, 175, 55, 0.1), rgba(216, 168, 168, 0.1));
+            border: 1px solid var(--gold);
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .affirmation-box p {
+            color: var(--gold);
+            font-size: 14px;
+            font-weight: 500;
+            line-height: 1.8;
+            font-style: italic;
+        }
+
+        /* Tracker Styles */
+        .tracker-header {
+            margin-bottom: 28px;
+            text-align: center;
+        }
+
+        .tracker-header h2 {
+            font-size: 28px;
+            color: var(--gold);
+            margin-bottom: 8px;
+            font-weight: 700;
+        }
+
+        .form-section {
+            background: var(--dark-card);
+            border: 1px solid var(--dark-border);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 16px;
+        }
+
+        .section-label {
+            display: flex;
+            align-items: center;
+            font-size: 16px;
+            font-weight: 700;
+            color: #ffffff;
+            margin-bottom: 8px;
+            gap: 12px;
+        }
+
+        .section-icon {
+            font-size: 20px;
+        }
+
+        .section-hint {
+            font-size: 12px;
+            color: #8a8a9a;
+            margin-bottom: 12px;
+            font-style: italic;
+        }
+
+        .counter-input {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 16px;
+        }
+
+        .counter-btn {
+            background: var(--dark-border);
+            border: 1px solid var(--gold);
+            color: var(--gold);
+            width: 44px;
+            height: 44px;
+            border-radius: 8px;
+            font-size: 24px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .counter-btn:hover {
+            background: var(--gold);
+            color: var(--dark-bg);
+        }
+
+        .counter-display {
+            background: var(--dark-border);
+            border: 1px solid var(--dark-border);
+            color: var(--gold);
+            width: 80px;
+            height: 44px;
+            border-radius: 8px;
+            font-size: 24px;
+            font-weight: 700;
+            text-align: center;
+            font-family: inherit;
+        }
+
+        .counter-display:focus {
+            outline: none;
+            border-color: var(--gold);
+        }
+
+        .checkbox-label {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            color: #ffffff;
+            cursor: pointer;
+        }
+
+        .checkbox-label input {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+        }
+
+        .notes-textarea {
+            width: 100%;
+            padding: 12px;
+            background: var(--dark-border);
+            border: 1px solid var(--dark-border);
+            border-radius: 8px;
+            color: #ffffff;
+            font-family: inherit;
+            font-size: 14px;
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .notes-textarea:focus {
+            outline: none;
+            border-color: var(--gold);
+        }
+
+        .notes-textarea::placeholder {
+            color: #8a8a9a;
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 16px;
+            font-size: 16px;
+            margin-bottom: 20px;
+        }
+
+        .success-message {
+            background: rgba(212, 175, 55, 0.15);
+            border: 1px solid var(--gold);
+            border-radius: 10px;
+            padding: 16px;
+            text-align: center;
+            color: var(--gold);
+            font-weight: 600;
+            margin-bottom: 20px;
+        }
+
+        /* Affirmations Styles */
+        .affirmations-header {
+            margin-bottom: 28px;
+            text-align: center;
+        }
+
+        .affirmations-header h2 {
+            font-size: 28px;
+            color: var(--gold);
+            margin-bottom: 8px;
+            font-weight: 700;
+        }
+
+        .affirmation-card {
+            background: linear-gradient(135deg, var(--dark-card), var(--dark-border));
+            border: 2px solid var(--gold);
+            border-radius: 16px;
+            padding: 40px 28px;
+            margin-bottom: 28px;
+            min-height: 300px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 8px 32px rgba(212, 175, 55, 0.15);
+            position: relative;
+        }
+
+        .category-badge {
+            position: absolute;
+            top: 16px;
+            right: 16px;
+            background: var(--gold);
+            color: var(--dark-bg);
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .affirmation-text {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--gold);
+            text-align: center;
+            line-height: 1.6;
+            margin: 0;
+            font-style: italic;
+        }
+
+        .counter {
+            font-size: 12px;
+            color: #8a8a9a;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-top: 20px;
+        }
+
+        .controls {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+
+        .control-btn {
+            background: var(--dark-card);
+            border: 1px solid var(--dark-border);
+            color: var(--gold);
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            font-size: 24px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .control-btn:hover {
+            border-color: var(--gold);
+            box-shadow: 0 4px 12px rgba(212, 175, 55, 0.2);
+        }
+
+        .control-btn.play-btn.active {
+            background: var(--gold);
+            color: var(--dark-bg);
+        }
+
+        .affirmation-list {
+            background: var(--dark-card);
+            border: 1px solid var(--dark-border);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 28px;
+        }
+
+        .affirmation-list h3 {
+            color: var(--gold);
+            margin-bottom: 16px;
+            font-size: 16px;
+            font-weight: 700;
+        }
+
+        .list-grid {
+            display: grid;
+            gap: 8px;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .list-item {
+            background: var(--dark-border);
+            border-left: 3px solid var(--gold);
+            padding: 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+
+        .list-item:hover {
+            background: #3a3a4e;
+        }
+
+        .list-item.active {
+            background: rgba(212, 175, 55, 0.2);
+        }
+
+        /* Vision Board Styles */
+        .vision-header {
+            margin-bottom: 28px;
+            text-align: center;
+        }
+
+        .vision-header h2 {
+            font-size: 28px;
+            color: var(--gold);
+            margin-bottom: 8px;
+            font-weight: 700;
+        }
+
+        .upload-section {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 28px;
+        }
+
+        .upload-btn {
+            background: linear-gradient(135deg, var(--accent), var(--gold));
+            border: none;
+            color: var(--dark-bg);
+            padding: 16px 32px;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+        }
+
+        .upload-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(212, 175, 55, 0.3);
+        }
+
+        .upload-btn:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+        }
+
+        .upload-input {
+            display: none;
+        }
+
+        .category-filter {
+            display: flex;
+            gap: 8px;
+            overflow-x: auto;
+            padding: 12px 0;
+            margin-bottom: 28px;
+        }
+
+        .category-btn {
+            background: var(--dark-card);
+            border: 1px solid var(--dark-border);
+            color: var(--text-secondary);
+            padding: 10px 16px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+        }
+
+        .category-btn:hover {
+            border-color: var(--gold);
+            color: var(--gold);
+        }
+
+        .category-btn.active {
+            background: var(--gold);
+            color: var(--dark-bg);
+            border-color: var(--gold);
+        }
+
+        .vision-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 12px;
+            margin-bottom: 28px;
+        }
+
+        .vision-card {
+            position: relative;
+            overflow: hidden;
+            border-radius: 12px;
+            aspect-ratio: 1;
+            cursor: pointer;
+            border: 1px solid var(--dark-border);
+            transition: all 0.3s ease;
+        }
+
+        .vision-card:hover {
+            border-color: var(--gold);
+            box-shadow: 0 4px 16px rgba(212, 175, 55, 0.2);
+        }
+
+        .vision-card img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .vision-card .delete-btn {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            background: #d8a8a8;
+            border: none;
+            color: var(--dark-bg);
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            font-size: 16px;
+            cursor: pointer;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .vision-card:hover .delete-btn {
+            opacity: 1;
+        }
+
+        /* Coach Styles */
+        .coach-header {
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .coach-header h2 {
+            font-size: 28px;
+            color: var(--gold);
+            margin-bottom: 8px;
+            font-weight: 700;
+        }
+
+        .coach-header p {
+            color: var(--text-secondary);
+            font-size: 14px;
+        }
+
+        .api-setup {
+            background: var(--dark-card);
+            border: 1px solid var(--dark-border);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .api-setup p {
+            color: var(--text-secondary);
+            margin-bottom: 12px;
+            font-size: 14px;
+        }
+
+        .api-input {
+            width: 100%;
+            padding: 12px;
+            background: var(--dark-border);
+            border: 1px solid var(--dark-border);
+            border-radius: 8px;
+            color: var(--gold);
+            font-size: 13px;
+            margin-bottom: 12px;
+        }
+
+        .api-input:focus {
+            outline: none;
+            border-color: var(--gold);
+        }
+
+        .api-hint {
+            font-size: 12px;
+            color: #8a8a9a;
+        }
+
+        .api-hint a {
+            color: var(--gold);
+            text-decoration: none;
+        }
+
+        .messages-container {
+            background: var(--dark-card);
+            border: 1px solid var(--dark-border);
+            border-radius: 12px;
+            padding: 20px;
+            height: 300px;
+            overflow-y: auto;
+            margin-bottom: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .welcome-message {
+            text-align: center;
+            margin: auto;
+        }
+
+        .welcome-message p:first-child {
+            font-size: 24px;
+            color: var(--gold);
+            font-weight: 700;
+        }
+
+        .welcome-message p:last-child {
+            color: var(--text-secondary);
+            font-size: 13px;
+        }
+
+        .message {
+            display: flex;
+            gap: 12px;
+            align-items: flex-start;
+        }
+
+        .message.user {
+            justify-content: flex-end;
+        }
+
+        .message.assistant {
+            justify-content: flex-start;
+        }
+
+        .message-avatar {
+            font-size: 20px;
+            flex-shrink: 0;
+        }
+
+        .message-content {
+            max-width: 70%;
+            padding: 12px 16px;
+            border-radius: 12px;
+            word-wrap: break-word;
+            font-size: 13px;
+            line-height: 1.5;
+        }
+
+        .message.user .message-content {
+            background: var(--accent);
+            color: #ffffff;
+        }
+
+        .message.assistant .message-content {
+            background: var(--dark-border);
+            color: var(--gold);
+            border: 1px solid var(--gold);
+        }
+
+        .message-form {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 20px;
+        }
+
+        .message-input {
+            flex: 1;
+            padding: 12px;
+            background: var(--dark-card);
+            border: 1px solid var(--dark-border);
+            border-radius: 8px;
+            color: #ffffff;
+            font-size: 13px;
+        }
+
+        .message-input:focus {
+            outline: none;
+            border-color: var(--gold);
+        }
+
+        .message-input::placeholder {
+            color: #8a8a9a;
+        }
+
+        .send-btn {
+            background: linear-gradient(135deg, var(--accent), var(--gold));
+            border: none;
+            color: var(--dark-bg);
+            width: 44px;
+            height: 44px;
+            border-radius: 8px;
+            font-size: 18px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .send-btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+        }
+
+        .send-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .coach-tips {
+            background: var(--dark-card);
+            border: 1px solid var(--dark-border);
+            border-radius: 8px;
+            padding: 12px;
+            text-align: center;
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        @media (max-width: 768px) {
+            .header-content h1 {
+                font-size: 24px;
+            }
+
+            .goals-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .quick-actions {
+                grid-template-columns: 1fr;
+            }
+
+            .affirmation-text {
+                font-size: 20px;
+            }
+
+            .affirmation-card {
+                min-height: 200px;
+                padding: 28px 20px;
+            }
+
+            .vision-grid {
+                grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+            }
+
+            .message-content {
+                max-width: 85%;
+            }
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: var(--text-secondary);
+        }
+
+        .empty-state p {
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="app">
+        <header class="app-header">
+            <div class="header-content">
+                <h1>✨ Mini Lumina ✨</h1>
+                <p class="challenge-period">July 3 - August 3</p>
+            </div>
+        </header>
+
+        <main class="main-content">
+            <!-- Dashboard View -->
+            <div id="dashboard" class="view active">
+                <div class="dashboard-greeting">
+                    <h2>Welcome back, Queen</h2>
+                    <p>31 days to your perfect summer transformation</p>
+                </div>
+
+                <div class="streak-card">
+                    <div class="streak-number" id="streakDisplay">🔥 0</div>
+                    <p>Day Streak</p>
+                </div>
+
+                <div class="goals-grid">
+                    <div class="goal-card">
+                        <div class="goal-icon">🍑</div>
+                        <h3>Booty</h3>
+                        <div class="goal-value" id="bootySessions">0</div>
+                        <p style="font-size: 12px; color: #b0b0c0;">sessions</p>
+                    </div>
+                    <div class="goal-card">
+                        <div class="goal-icon">✨</div>
+                        <h3>Beauty</h3>
+                        <div class="goal-value" id="beautyDays">0</div>
+                        <p style="font-size: 12px; color: #b0b0c0;">days</p>
+                    </div>
+                    <div class="goal-card">
+                        <div class="goal-icon">💰</div>
+                        <h3>Money</h3>
+                        <div class="goal-value" id="moneyMoves">0</div>
+                        <p style="font-size: 12px; color: #b0b0c0;">moves</p>
+                    </div>
+                </div>
+
+                <div class="quick-actions">
+                    <button class="action-btn" onclick="switchView('tracker')">📝 Today's Check-in</button>
+                    <button class="action-btn" onclick="switchView('affirmations')">✨ Read Affirmations</button>
+                    <button class="action-btn" onclick="switchView('coach')">💎 Talk to Delulu</button>
+                    <button class="action-btn" onclick="switchView('vision')">🎨 Vision Board</button>
+                </div>
+
+                <div class="affirmation-box">
+                    <p>💫 "I have a big, perfect booty. I'm so beautiful. Wealthy men adore me. I always have more than enough money."</p>
+                </div>
+            </div>
+
+            <!-- Daily Tracker View -->
+            <div id="tracker" class="view">
+                <button class="back-btn" onclick="switchView('dashboard')">← Back</button>
+                <div class="tracker-header">
+                    <h2>Today's Check-in</h2>
+                    <p id="todayDate"></p>
+                </div>
+
+                <form id="trackerForm" onsubmit="saveTracker(event)">
+                    <div class="form-section">
+                        <label class="section-label">
+                            <span class="section-icon">🍑</span>
+                            Booty Sessions
+                        </label>
+                        <p class="section-hint">Frog pumps + Glute bridges + Single-leg work</p>
+                        <div class="counter-input">
+                            <button type="button" class="counter-btn" onclick="decrementCounter('booty')">−</button>
+                            <input type="number" id="bootySessInput" class="counter-display" value="0" min="0" max="10">
+                            <button type="button" class="counter-btn" onclick="incrementCounter('booty')">+</button>
+                        </div>
+                    </div>
+
+                    <div class="form-section">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="beautySessInput">
+                            <span class="checkbox-text">✨ Beauty Routine Complete</span>
+                        </label>
+                        <p class="section-hint">Skincare, hydration, glow protocol</p>
+                    </div>
+
+                    <div class="form-section">
+                        <label class="section-label">
+                            <span class="section-icon">💰</span>
+                            Money Actions
+                        </label>
+                        <p class="section-hint">Fiverr, Upwork, passive income moves</p>
+                        <div class="counter-input">
+                            <button type="button" class="counter-btn" onclick="decrementCounter('money')">−</button>
+                            <input type="number" id="moneySessInput" class="counter-display" value="0" min="0" max="10">
+                            <button type="button" class="counter-btn" onclick="incrementCounter('money')">+</button>
+                        </div>
+                    </div>
+
+                    <div class="form-section">
+                        <label class="section-label">📝 Notes & Vibes</label>
+                        <textarea id="notesInput" class="notes-textarea" placeholder="How are you feeling? What's shifting?"></textarea>
+                    </div>
+
+                    <button type="submit" class="btn submit-btn">✓ Log Today's Entry</button>
+                </form>
+                <div id="trackerMessage"></div>
+            </div>
+
+            <!-- Affirmations View -->
+            <div id="affirmations" class="view">
+                <button class="back-btn" onclick="switchView('dashboard')">← Back</button>
+                <div class="affirmations-header">
+                    <h2>Affirmations</h2>
+                    <p>Read these daily. Embody them. They are your truth.</p>
+                </div>
+
+                <div class="affirmation-card">
+                    <div class="category-badge" id="categoryBadge">🍑 Booty</div>
+                    <p class="affirmation-text" id="affirmationText">I have a big, perfect booty</p>
+                    <p class="counter" id="affirmationCounter">1 of 38</p>
+                </div>
+
+                <div class="controls">
+                    <button class="control-btn" onclick="prevAffirmation()">‹</button>
+                    <button class="control-btn play-btn active" id="playBtn" onclick="toggleAutoplay()">⏸</button>
+                    <button class="control-btn" onclick="nextAffirmation()">›</button>
+                </div>
+
+                <div class="affirmation-list">
+                    <h3>All Affirmations</h3>
+                    <div class="list-grid" id="affirmationsList"></div>
+                </div>
+            </div>
+
+            <!-- Vision Board View -->
+            <div id="vision" class="view">
+                <button class="back-btn" onclick="switchView('dashboard')">← Back</button>
+                <div class="vision-header">
+                    <h2>✨ Vision Board</h2>
+                    <p>See it. Feel it. Embody it. It's already yours.</p>
+                </div>
+
+                <div class="upload-section">
+                    <label class="upload-btn">
+                        + Add Vision
+                        <input type="file" class="upload-input" accept="image/*" onchange="handleImageUpload(event)">
+                    </label>
+                </div>
+
+                <div class="category-filter">
+                    <button class="category-btn active" onclick="filterVision('all')">✨ All</button>
+                    <button class="category-btn" onclick="filterVision('booty')">🍑 Booty</button>
+                    <button class="category-btn" onclick="filterVision('beauty')">💄 Beauty</button>
+                    <button class="category-btn" onclick="filterVision('wealth')">💎 Wealth</button>
+                    <button class="category-btn" onclick="filterVision('lifestyle')">🌟 Lifestyle</button>
+                </div>
+
+                <div class="vision-grid" id="visionGrid"></div>
+            </div>
+
+            <!-- Coach View -->
+            <div id="coach" class="view">
+                <button class="back-btn" onclick="switchView('dashboard')">← Back</button>
+                <div class="coach-header">
+                    <h2>💎 Delulu Coach</h2>
+                    <p>Your unshakeable manifestation guide.</p>
+                </div>
+
+                <div id="apiSetup" class="api-setup" style="display:none;">
+                    <p>Enter your Groq API key to activate Delulu</p>
+                    <input type="password" id="apiKeyInput" class="api-input" placeholder="Your Groq API key">
+                    <p class="api-hint">Get free API at <a href="https://console.groq.com" target="_blank">console.groq.com</a></p>
+                </div>
+
+                <div class="messages-container" id="messagesContainer">
+                    <div class="welcome-message">
+                        <p>✨ Welcome, Queen</p>
+                        <p>Ask me anything about your transformation.</p>
+                    </div>
+                </div>
+
+                <div class="message-form">
+                    <input type="text" id="messageInput" class="message-input" placeholder="Ask Delulu anything...">
+                    <button class="send-btn" onclick="sendMessage(event)">✨</button>
+                </div>
+
+                <div class="coach-tips">
+                    <p>💫 Ask about limiting beliefs or celebrate your wins!</p>
+                </div>
+            </div>
+        </main>
+
+        <nav class="bottom-nav">
+            <button class="nav-btn active" onclick="switchView('dashboard')" title="Dashboard">📊</button>
+            <button class="nav-btn" onclick="switchView('tracker')" title="Tracker">✓</button>
+            <button class="nav-btn" onclick="switchView('vision')" title="Vision">🎨</button>
+            <button class="nav-btn" onclick="switchView('affirmations')" title="Affirmations">✨</button>
+            <button class="nav-btn" onclick="switchView('coach')" title="Coach">💎</button>
+        </nav>
+    </div>
+
+    <script>
+        // Initialize DB
+        let db;
+        const affirmations = [
+            'I have a big, perfect booty', 'My ass is round, full, and perfectly shaped', 'My glutes are popping and sculpted', 'I look like Maya with that perfect body', 'My body is literally perfect', 'My curves are snatched and enviable', 'Every workout builds my dream body faster', 'My booty is my signature',
+            'I\'m so beautiful', 'My face is slim and symmetrical', 'My features are perfectly proportioned', 'My skin is flawless and hydrated', 'I\'m glowing from within', 'I\'m beautiful like Latto', 'I look like Latto but even prettier', 'My beauty is undeniable and magnetic', 'Every day I get more radiant', 'My skin is clear, smooth, and luminous', 'I\'m gorgeous and I know it',
+            'Wealthy, handsome men love spoiling me for no reason', 'Money flows to me effortlessly', 'I always have more than enough money', 'Abundance is my natural state', 'I\'m a money magnet', 'Men are good to me and generous', 'I attract wealth constantly', 'Financial freedom is mine', 'I\'m wealthy and getting wealthier', 'Money comes easily to me',
+            'This is my reality', 'I am already this person', 'I embody perfection', 'I deserve all of this', 'It\'s done, it\'s mine, it\'s real'
+        ];
+
+        let currentAffirmationIndex = 0;
+        let autoplayEnabled = true;
+        let affirmationInterval;
+        let coachMessages = [];
+        let apiKey = '';
+
+        // Init DB
+        function initDB() {
+            const request = indexedDB.open('MiniLumina', 1);
+            request.onerror = () => console.error('DB error');
+            request.onsuccess = () => {
+                db = request.result;
+                loadDashboard();
+                setTodayDate();
+                renderAffirmations();
+                loadVisionBoard();
+                loadCoachMessages();
+            };
+            request.onupgradeneeded = (e) => {
+                const database = e.target.result;
+                if (!database.objectStoreNames.contains('entries')) {
+                    database.createObjectStore('entries', { keyPath: 'id', autoIncrement: true });
+                }
+                if (!database.objectStoreNames.contains('images')) {
+                    database.createObjectStore('images', { keyPath: 'id', autoIncrement: true });
+                }
+                if (!database.objectStoreNames.contains('settings')) {
+                    database.createObjectStore('settings', { keyPath: 'key' });
+                }
+            };
+        }
+
+        // View switching
+        function switchView(viewName) {
+            document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+            document.getElementById(viewName).classList.add('active');
+            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+            event.target.closest('.nav-btn') && event.target.closest('.nav-btn').classList.add('active');
+
+            if (viewName === 'dashboard') loadDashboard();
+            if (viewName === 'affirmations') startAutoplay();
+            if (viewName === 'vision') loadVisionBoard();
+        }
+
+        // Dashboard
+        function loadDashboard() {
+            const tx = db.transaction(['entries'], 'readonly');
+            const store = tx.objectStore('entries');
+            const request = store.getAll();
+
+            request.onsuccess = () => {
+                const entries = request.result;
+                let bootySessions = 0, beautyDays = 0, moneyMoves = 0;
+                const uniqueDates = new Set();
+
+                entries.forEach(e => {
+                    if (e.booty) bootySessions += e.booty;
+                    if (e.beauty) beautyDays++;
+                    if (e.money) moneyMoves += e.money;
+                    uniqueDates.add(new Date(e.date).toDateString());
+                });
+
+                let streak = 0;
+                for (let i = 0; i < 31; i++) {
+                    const d = new Date();
+                    d.setDate(d.getDate() - i);
+                    if (uniqueDates.has(d.toDateString())) streak++;
+                    else break;
+                }
+
+                document.getElementById('streakDisplay').textContent = `🔥 ${streak}`;
+                document.getElementById('bootySessions').textContent = bootySessions;
+                document.getElementById('beautyDays').textContent = beautyDays;
+                document.getElementById('moneyMoves').textContent = moneyMoves;
+            };
+        }
+
+        // Tracker functions
+        function setTodayDate() {
+            const options = { weekday: 'long', month: 'long', day: 'numeric' };
+            document.getElementById('todayDate').textContent = new Date().toLocaleDateString('en-US', options);
+        }
+
+        function incrementCounter(type) {
+            const input = document.getElementById(type === 'booty' ? 'bootySessInput' : 'moneySessInput');
+            input.value = Math.min(10, parseInt(input.value) + 1);
+        }
+
+        function decrementCounter(type) {
+            const input = document.getElementById(type === 'booty' ? 'bootySessInput' : 'moneySessInput');
+            input.value = Math.max(0, parseInt(input.value) - 1);
+        }
+
+        function saveTracker(e) {
+            e.preventDefault();
+            const entry = {
+                date: new Date().toISOString(),
+                booty: parseInt(document.getElementById('bootySessInput').value),
+                beauty: document.getElementById('beautySessInput').checked,
+                money: parseInt(document.getElementById('moneySessInput').value),
+                notes: document.getElementById('notesInput').value
+            };
+
+            const tx = db.transaction(['entries'], 'readwrite');
+            const store = tx.objectStore('entries');
+            store.add(entry);
+
+            document.getElementById('trackerMessage').innerHTML = '✨ Entry saved! You\'re manifesting perfectly.';
+            setTimeout(() => {
+                document.getElementById('trackerMessage').innerHTML = '';
+                document.getElementById('trackerForm').reset();
+                loadDashboard();
+            }, 2000);
+        }
+
+        // Affirmations
+        function renderAffirmations() {
+            const list = document.getElementById('affirmationsList');
+            list.innerHTML = affirmations.map((a, i) => `<div class="list-item" onclick="jumpToAffirmation(${i})">${a}</div>`).join('');
+            showAffirmation();
+        }
+
+        function showAffirmation() {
+            const aff = affirmations[currentAffirmationIndex];
+            document.getElementById('affirmationText').textContent = aff;
+            document.getElementById('affirmationCounter').textContent = `${currentAffirmationIndex + 1} of ${affirmations.length}`;
+
+            const categories = ['🍑 Booty', '✨ Beauty', '💰 Money', '🌟 Integration'];
+            let cat = categories[0];
+            if (currentAffirmationIndex < 8) cat = categories[0];
+            else if (currentAffirmationIndex < 19) cat = categories[1];
+            else if (currentAffirmationIndex < 29) cat = categories[2];
+            else cat = categories[3];
+            document.getElementById('categoryBadge').textContent = cat;
+
+            document.querySelectorAll('.list-item').forEach((item, i) => {
+                item.classList.toggle('active', i === currentAffirmationIndex);
+            });
+        }
+
+        function nextAffirmation() {
+            currentAffirmationIndex = (currentAffirmationIndex + 1) % affirmations.length;
+            showAffirmation();
+        }
+
+        function prevAffirmation() {
+            currentAffirmationIndex = (currentAffirmationIndex - 1 + affirmations.length) % affirmations.length;
+            showAffirmation();
+        }
+
+        function jumpToAffirmation(index) {
+            currentAffirmationIndex = index;
+            showAffirmation();
+            autoplayEnabled = false;
+            document.getElementById('playBtn').classList.remove('active');
+        }
+
+        function toggleAutoplay() {
+            autoplayEnabled = !autoplayEnabled;
+            document.getElementById('playBtn').classList.toggle('active');
+            if (autoplayEnabled) startAutoplay();
+            else stopAutoplay();
+        }
+
+        function startAutoplay() {
+            stopAutoplay();
+            affirmationInterval = setInterval(() => {
+                nextAffirmation();
+            }, 4000);
+        }
+
+        function stopAutoplay() {
+            clearInterval(affirmationInterval);
+        }
+
+        // Vision Board
+        function handleImageUpload(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = (event) => {
+                const image = {
+                    data: event.target.result,
+                    category: 'lifestyle',
+                    date: new Date().toISOString()
+                };
+
+                const tx = db.transaction(['images'], 'readwrite');
+                const store = tx.objectStore('images');
+                store.add(image);
+
+                loadVisionBoard();
+                e.target.value = '';
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function loadVisionBoard() {
+            const tx = db.transaction(['images'], 'readonly');
+            const store = tx.objectStore('images');
+            const request = store.getAll();
+
+            request.onsuccess = () => {
+                renderVisionGrid(request.result.reverse());
+            };
+        }
+
+        function renderVisionGrid(images) {
+            const grid = document.getElementById('visionGrid');
+            if (images.length === 0) {
+                grid.innerHTML = '<div style="grid-column: 1/-1; text-align: center; padding: 40px; color: #b0b0c0;">✨ Your vision board is waiting to be filled</div>';
+                return;
+            }
+            grid.innerHTML = images.map((img, i) => `
+                <div class="vision-card">
+                    <img src="${img.data}" alt="vision">
+                    <button class="delete-btn" onclick="deleteImage(${i})">✕</button>
+                </div>
+            `).join('');
+        }
+
+        function deleteImage(index) {
+            const tx = db.transaction(['images'], 'readwrite');
+            const store = tx.objectStore('images');
+            const request = store.getAll();
+
+            request.onsuccess = () => {
+                const images = request.result;
+                store.delete(images[images.length - 1 - index].id);
+                loadVisionBoard();
+            };
+        }
+
+        function filterVision(cat) {
+            document.querySelectorAll('.category-btn').forEach(b => b.classList.remove('active'));
+            event.target.classList.add('active');
+            // Simple filter - in production would filter actual data
+        }
+
+        // Coach
+        function loadCoachMessages() {
+            const tx = db.transaction(['settings'], 'readonly');
+            const store = tx.objectStore('settings');
+            const request = store.get('apiKey');
+
+            request.onsuccess = () => {
+                if (request.result) {
+                    apiKey = request.result.value;
+                    document.getElementById('apiSetup').style.display = 'none';
+                } else {
+                    document.getElementById('apiSetup').style.display = 'block';
+                }
+            };
+        }
+
+        function sendMessage(e) {
+            e.preventDefault();
+            const input = document.getElementById('messageInput');
+            const message = input.value.trim();
+            if (!message) return;
+
+            if (!apiKey) {
+                const key = document.getElementById('apiKeyInput').value;
+                if (key) {
+                    apiKey = key;
+                    const tx = db.transaction(['settings'], 'readwrite');
+                    const store = tx.objectStore('settings');
+                    store.put({ key: 'apiKey', value: key });
+                    document.getElementById('apiSetup').style.display = 'none';
+                } else {
+                    alert('Enter your Groq API key first');
+                    return;
+                }
+            }
+
+            addMessage('user', message);
+            input.value = '';
+
+            callGroqAPI(message).then(response => {
+                addMessage('assistant', response);
+            });
+        }
+
+        function addMessage(role, content) {
+            const container = document.getElementById('messagesContainer');
+            if (container.querySelector('.welcome-message')) {
+                container.innerHTML = '';
+            }
+
+            const msg = document.createElement('div');
+            msg.className = `message ${role}`;
+            msg.innerHTML = `
+                <div class="message-avatar">${role === 'user' ? '👑' : '💎'}</div>
+                <div class="message-content">${content}</div>
+            `;
+            container.appendChild(msg);
+            container.scrollTop = container.scrollHeight;
+        }
+
+        async function callGroqAPI(userMessage) {
+            try {
+                const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${apiKey}`
+                    },
+                    body: JSON.stringify({
+                        model: 'mixtral-8x7b-32768',
+                        messages: [
+                            {
+                                role: 'system',
+                                content: 'You are Delulu, an unshakeable manifestation coach. Speak as if her goals (big booty, flawless beauty, abundant wealth & men) are ALREADY REAL. No wishy-washy language. Keep responses under 100 words, punchy and powerful. She\'s on a 1-month challenge (July 3 - Aug 3). Her goals: glute perfection like Maya, radiant beauty, and wealthy handsome men spoiling her.'
+                            },
+                            { role: 'user', content: userMessage }
+                        ],
+                        temperature: 0.9,
+                        max_tokens: 300
+                    })
+                });
+
+                if (!response.ok) {
+                    throw new Error('API error');
+                }
+
+                const data = await response.json();
+                return data.choices[0].message.content;
+            } catch (err) {
+                return '✨ Connect your API key from console.groq.com to activate Delulu.';
+            }
+        }
+
+        // Init
+        initDB();
+    </script>
+</body>
+</html>
